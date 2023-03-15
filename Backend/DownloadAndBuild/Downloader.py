@@ -1,11 +1,17 @@
+import os
+import shutil
 import subprocess
 import json
+
+from pathlib import Path
+
 from Backend.DownloadAndBuild.Config import *
 from Backend.DownloadAndBuild.ProfileTemplate import *
 
 class Downloader:
 
     def __init__(self) -> None:
+        self.absConfigPath: str
         self.config: Config
         self.installJsons: list[str] = []
 
@@ -13,6 +19,23 @@ class Downloader:
         self.jsonResult: str
 
     def Setup(self, configPath: str):
+        self.absConfigPath = configPath
+
+        currentDir = os.getcwd()
+        tempDir = ".\Temp"
+        
+        if os.path.isdir(tempDir):
+            shutil.rmtree(tempDir)
+        os.mkdir(tempDir)
+        os.chdir(tempDir)
+
+        self.Work(configPath)
+        
+        os.chdir(currentDir)
+
+
+    def Work(self, configPath: str):
+
         with open(configPath, 'r') as file:
             j = file.read().replace('\n', '')
             d = json.loads(j)
@@ -29,9 +52,7 @@ class Downloader:
             return
 
         self.AccumulateResults()
-
         self.ConvertToResultObject()
-
         self.SaveResults()
  
     def AccumulatePackageInfo(self) -> bool:
@@ -55,10 +76,9 @@ class Downloader:
             self.installJsons.append(jsonData)
 
             ###
-            with open(f"./install_{p.name}_{p.version}.json", 'w') as file:
-                file.write(jsonData)
+            # with open(f"./install_{p.name}_{p.version}.json", 'w') as file:
+                # file.write(jsonData)
             ###
-
         return True
             
     def AccumulateResults(self):
@@ -91,7 +111,13 @@ class Downloader:
         self.jsonResult = json.dumps(self.results.__dict__, default=lambda o: o.__dict__, indent=4, sort_keys=True)
 
     def SaveResults(self):
-        with open(self.config.resultFileName, 'w') as file:
+        resultAbsFileName = self.config.resultFileName
+
+        if not os.path.isabs(resultAbsFileName):
+            absConfigDirPath = Path(self.absConfigPath).parent.absolute().__str__()
+            resultAbsFileName = os.path.join(absConfigDirPath, resultAbsFileName)
+
+        with open(resultAbsFileName, 'w') as file:
             file.write(self.jsonResult)
 
 

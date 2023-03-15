@@ -11,7 +11,7 @@
             "program": "mainDownloader.py",
             "console": "integratedTerminal",
             "justMyCode": true,
-            "args": ".\\Backend\\DownloadAndBuild\\p.json"
+            "args": ".\\p.json"
         }
     ]
 }
