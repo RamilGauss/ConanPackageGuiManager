@@ -1,9 +1,14 @@
+# Author: Gudakov Ramil Sergeevich a.k.a. Gauss
+# Гудаков Рамиль Сергеевич
+# Contacts: [ramil2085@mail.ru, ramil2085@gmail.com]
+# See for more information LICENSE.md.
+
 import os
 import shutil
 import subprocess
 import json
 
-from pathlib import Path
+from Backend.Utils.Relative import *
 
 from Backend.DownloadAndBuild.Config import *
 from Backend.DownloadAndBuild.ProfileTemplate import *
@@ -66,7 +71,7 @@ class Downloader:
         
     def InstallPackages(self) -> bool:
         for p in self.config.packages:
-            cmd = ["conan", "install", "--build=missing", "-pr", "./profile", f"--requires={p.name}/{p.version}", "--format=json"]
+            cmd = ["conan", "install", "--build=missing", "-o", f"shared={p.shared}", "-pr", "./profile", f"--requires={p.name}/{p.version}", "--format=json"]
             result = subprocess.run(cmd, stdout=subprocess.PIPE)
 
             if result.returncode != 0:
@@ -75,10 +80,9 @@ class Downloader:
             jsonData: str = result.stdout.decode("utf-8").replace('\r', '')
             self.installJsons.append(jsonData)
 
-            ###
-            # with open(f"./install_{p.name}_{p.version}.json", 'w') as file:
-                # file.write(jsonData)
-            ###
+            if self.config.debugFlag:
+                with open(f"./install_{p.name}_{p.version}.json", 'w') as file:
+                    file.write(jsonData)
         return True
             
     def AccumulateResults(self):
@@ -111,11 +115,8 @@ class Downloader:
         self.jsonResult = json.dumps(self.results.__dict__, default=lambda o: o.__dict__, indent=4, sort_keys=True)
 
     def SaveResults(self):
-        resultAbsFileName = self.config.resultFileName
 
-        if not os.path.isabs(resultAbsFileName):
-            absConfigDirPath = Path(self.absConfigPath).parent.absolute().__str__()
-            resultAbsFileName = os.path.join(absConfigDirPath, resultAbsFileName)
+        resultAbsFileName = Relative.Convert(self.absConfigPath, self.config.resultFileName)
 
         with open(resultAbsFileName, 'w') as file:
             file.write(self.jsonResult)

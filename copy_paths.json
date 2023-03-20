@@ -1,0 +1,5 @@
+{
+    "libDir": "./Libs",
+    "binDir": "./Bins",
+    "installResult": "./install_result.json"
+}

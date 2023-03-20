@@ -1,22 +1,19 @@
+# Author: Gudakov Ramil Sergeevich a.k.a. Gauss
+# Гудаков Рамиль Сергеевич
+# Contacts: [ramil2085@mail.ru, ramil2085@gmail.com]
+# See for more information LICENSE.md.
+
 import os
 import sys
 
-import shutil
+sys.path.insert(0, ".")
 
 from Backend.DownloadAndBuild.Downloader import *
 
 if __name__ == '__main__':
 
-    # Вход - путь к файлу результату ConanDownloader
     if len(sys.argv) != 1:
         absPath = os.path.abspath(sys.argv[1])
-
-        tempDir = ".\Temp"
-        
-        if os.path.isdir(tempDir):
-            shutil.rmtree(tempDir)
-        os.mkdir(tempDir)
-        os.chdir(tempDir)
 
         downloader = Downloader()
         downloader.Setup(absPath)

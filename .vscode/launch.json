@@ -8,10 +8,45 @@
             "name": "Python: Current File",
             "type": "python",
             "request": "launch",
-            "program": "mainDownloader.py",
+            "program": "./installConanPackagesToSolution.py",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+            "program": "./Tests/mainSolutionSetup.py",
             "console": "integratedTerminal",
             "justMyCode": true,
-            "args": ".\\p.json"
+            "args": ".\\solution_setup.json"
+        },
+        {
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+            "program": "./Tests/mainCopy.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "args": ".\\copy_paths.json"
+        },
+        {
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+            "program": "./Tests/mainPropsGenerator.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "args": ".\\props_generator_config.json"
+        },
+        {
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+            "program": "./Tests/mainDownloader.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "args": ".\\install_instruction.json"
         }
     ]
 }

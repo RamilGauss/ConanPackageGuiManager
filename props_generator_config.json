@@ -1,0 +1,5 @@
+{
+    "propsFile": "./props.props",
+    "installResult": "./install_result.json",
+    "ideParamsPath": "./ide_params.json"
+}
