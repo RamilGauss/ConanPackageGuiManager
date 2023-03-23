@@ -1,5 +1,5 @@
 {
-    "libDir": "./Libs",
-    "binDir": "./Bins",
+    "libDir": "../../Lib",
+    "binDir": "../../Exe",
     "installResult": "./install_result.json"
 }

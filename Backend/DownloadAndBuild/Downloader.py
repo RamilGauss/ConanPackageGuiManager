@@ -62,7 +62,7 @@ class Downloader:
  
     def AccumulatePackageInfo(self) -> bool:
         for p in self.config.packages:
-            cmd = ["conan", "graph", "info", "-pr", "./profile", f"--requires={p.name}/{p.version}"]
+            cmd = ["conan", "graph", "info", "-pr", "./profile", f"--requires={p.name}/{p.version}", "--format=json"]
             result = subprocess.run(cmd, stdout=subprocess.PIPE)
 
             if result.returncode != 0:
@@ -71,7 +71,12 @@ class Downloader:
         
     def InstallPackages(self) -> bool:
         for p in self.config.packages:
-            cmd = ["conan", "install", "--build=missing", "-o", f"shared={p.shared}", "-pr", "./profile", f"--requires={p.name}/{p.version}", "--format=json"]
+            cmd = ["conan", "install", "--build=missing", "-pr", "./profile", f"--requires={p.name}/{p.version}", "--format=json"]
+
+            for opt in p.options:
+                cmd.append("-o")
+                cmd.append(opt)
+
             result = subprocess.run(cmd, stdout=subprocess.PIPE)
 
             if result.returncode != 0:
@@ -97,19 +102,33 @@ class Downloader:
                 label = node["label"]
 
                 cpp_info = node["cpp_info"]
+
+                includedir = ""
+
+                for info_key, info_value in cpp_info.items():
+                    info_includedirs = info_value["includedirs"]
+                    for info_includedir in info_includedirs:
+                        if len(info_includedir) > len(includedir):
+                            includedir = info_includedir
+
                 root = cpp_info["root"]
-                includedirs = root["includedirs"]
                 libdirs = root["libdirs"]
                 bindirs = root["bindirs"]
 
                 packageResult = PackageResult()
                 if len(bindirs) > 0:
                     packageResult.binDir = bindirs[0]
-                if len(includedirs) > 0:
-                    packageResult.includeDir = includedirs[0]
+                packageResult.includeDir = includedir
                 if len(libdirs) > 0:
                     packageResult.libDir = libdirs[0]
                 self.results.packages[label] = packageResult
+                
+                cpp_infos = node["cpp_info"]
+                for cpp_info_key, cpp_info_value  in cpp_infos.items():
+                    defines = cpp_info_value["defines"]
+                    if defines is not None:
+                        for define in defines:
+                            self.results.defines.append(define)
 
     def ConvertToResultObject(self):    
         self.jsonResult = json.dumps(self.results.__dict__, default=lambda o: o.__dict__, indent=4, sort_keys=True)

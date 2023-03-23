@@ -1,5 +1,5 @@
 {
-    "solutionFilePath": "e:\\Github\\Test\\Test.sln",
+    "solutionFilePath": "../../MMOFramework.sln",
     "ideParamsPath": "./ide_params.json",
-    "propsFile": "./props.props"
+    "propsFile": "../../Conan.props"
 }
